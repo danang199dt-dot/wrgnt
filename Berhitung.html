@@ -1,0 +1,247 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WRGNT BERHITUNG</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Segoe UI, Arial, sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#0f172a,#1e293b);
+    color:#fff;
+    min-height:100vh;
+    padding:30px;
+}
+
+.container{
+    max-width:720px;
+    margin:auto;
+}
+
+.header{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.header h1{
+    font-size:32px;
+    font-weight:700;
+    letter-spacing:1px;
+}
+
+.header p{
+    margin-top:8px;
+    color:#94a3b8;
+    font-size:15px;
+}
+
+.card{
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:18px;
+    padding:25px;
+    backdrop-filter:blur(12px);
+    box-shadow:0 10px 30px rgba(0,0,0,0.3);
+}
+
+label{
+    display:block;
+    margin-top:18px;
+    margin-bottom:8px;
+    font-weight:600;
+    color:#cbd5e1;
+}
+
+input, select{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:10px;
+    background:#1e293b;
+    color:white;
+    font-size:15px;
+    outline:none;
+}
+
+button{
+    width:100%;
+    margin-top:20px;
+    padding:15px;
+    border:none;
+    border-radius:10px;
+    background:linear-gradient(90deg,#2563eb,#3b82f6);
+    color:white;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+button:hover{
+    opacity:.95;
+}
+
+.result{
+    margin-top:25px;
+    background:#111827;
+    padding:20px;
+    border-radius:14px;
+}
+
+.result p{
+    margin:10px 0;
+    color:#e2e8f0;
+}
+
+.result hr{
+    border:none;
+    border-top:1px solid #334155;
+    margin:15px 0;
+}
+
+.total{
+    font-size:18px;
+    font-weight:bold;
+    color:#38bdf8;
+}
+
+.note{
+    margin-top:20px;
+    background:#1e293b;
+    padding:18px;
+    border-radius:14px;
+    line-height:1.7;
+    color:#cbd5e1;
+    font-size:14px;
+}
+
+.badge{
+    display:inline-block;
+    padding:6px 12px;
+    background:#2563eb;
+    border-radius:30px;
+    font-size:12px;
+    margin-top:10px;
+}
+
+.footer{
+    text-align:center;
+    margin-top:25px;
+    color:#64748b;
+    font-size:13px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>WRGNT BERHITUNG</h1>
+        <p>Kalkulator Estimasi Pajak, BHP, USO & Administrasi ISP</p>
+        <div class="badge">Tidak semua kehilangan adalah kerugian *_^</div>
+    </div>
+
+    <div class="card">
+
+        <label>Bandwidth</label>
+        <input type="number" id="bandwidth" value="1" step="0.01">
+
+        <label>Satuan</label>
+        <select id="satuan">
+            <option value="gbps">Gbps</option>
+            <option value="mbps">Mbps</option>
+        </select>
+
+        <button onclick="hitung()">Hitung Estimasi</button>
+
+        <div class="result" id="hasil"></div>
+
+        <div class="note">
+            <b>Metode Perhitungan:</b><br><br>
+
+            Paket pelanggan tetap <b>Rp150.000</b> (sudah termasuk PPN 11%).<br>
+            DPP (Dasar Pengenaan Pajak) = 150.000 ÷ 1.11 = Rp135.135(Harga normal) <br><br>
+
+            Komponen:
+            <br>• PPN = 11% × DPP
+            <br>• BHP = 0.5% × DPP
+            <br>• USO = 1.75% × DPP
+            <br>• ADM = 2% × DPP
+            <br><br>
+
+            Rasio estimasi:
+            <br>• Kapasitas efektif = 40%
+            <br>• 1 Gbps efektif ≈ 400 pelanggan
+        </div>
+
+    </div>
+
+    <div class="footer">
+        warga.net|2026
+    </div>
+
+</div>
+
+<script>
+function rupiah(x){
+    return "Rp " + Math.round(x).toLocaleString("id-ID");
+}
+
+function hitung(){
+    let harga = 150000;
+    let bandwidth = parseFloat(document.getElementById("bandwidth").value);
+    let satuan = document.getElementById("satuan").value;
+
+    let mbps = satuan === "gbps" ? bandwidth * 1000 : bandwidth;
+    let kapasitasEfektif = mbps * 0.4;
+    let pelanggan = Math.floor(kapasitasEfektif);
+
+    let dpp = harga / 1.11;
+
+    let ppn = dpp * 0.11;
+    let bhp = dpp * 0.005;
+    let uso = dpp * 0.0175;
+    let adm = dpp * 0.02;
+
+    let totalPPN = ppn * pelanggan;
+    let totalBHP = bhp * pelanggan;
+    let totalUSO = uso * pelanggan;
+    let totalADM = adm * pelanggan;
+
+    let total = totalPPN + totalBHP + totalUSO + totalADM;
+    let bayar30 = total * 0.30;
+
+    document.getElementById("hasil").innerHTML = `
+        <p><b>Total Bandwidth:</b> ${mbps} Mbps</p>
+        <p><b>Estimasi Pelanggan:</b> ${pelanggan} pelanggan</p>
+        <p><b>Omzet Kotor:</b> ${rupiah(harga * pelanggan)}</p>
+
+        <hr>
+
+        <p><b>DPP per pelanggan:</b> ${rupiah(dpp)}</p>
+        <p>PPN: ${rupiah(totalPPN)}</p>
+        <p>BHP: ${rupiah(totalBHP)}</p>
+        <p>USO: ${rupiah(totalUSO)}</p>
+        <p>ADM: ${rupiah(totalADM)}</p>
+
+        <hr>
+
+        <p class="total">Total Kewajiban: ${rupiah(total)}</p>
+        <p class="total">Pembayaran 30%: ${rupiah(bayar30)}</p>
+    `;
+}
+
+window.onload = hitung;
+</script>
+
+</body>
+</html>
+
